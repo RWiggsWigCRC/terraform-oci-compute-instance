@@ -8,12 +8,20 @@ data "oci_core_subnet" "this" {
   subnet_id = element(var.subnet_ocids, count.index)
 }
 
+####
+# ad
+####
+data "oci_identity_availability_domains" "test_availability_domains" {
+    #Required
+    compartment_id = var.tenancy_ocid
+}
+
 ############
 # Instance
 ############
 resource "oci_core_instance" "this" {
-  count                =  var.instance_count
-  availability_domain  = "data.oci_core_subnet.this.*.availability_domain[count.index % length(data.oci_core_subnet.this.*.availability_domain)]"
+  count                = var.instance_count
+  availability_domain  = data.oci_identity_availability_domains.test_availability_domains.availability_domains[1]["name"]
   compartment_id       = var.compartment_ocid
   display_name         = var.instance_display_name == "" ? "" : var.instance_count != "1" ? "var.instance_display_name_"+count.index + 1 : var.instance_display_name
   extended_metadata    = var.extended_metadata
@@ -36,10 +44,11 @@ resource "oci_core_instance" "this" {
   }
 
   source_details {
-    boot_volume_size_in_gbs = var.boot_volume_size_in_gbs
+#    boot_volume_size_in_gbs = var.boot_volume_size_in_gbs
     source_id               = var.source_ocid
     source_type             = var.source_type
   }
+
 
   timeouts {
     create = var.instance_timeout

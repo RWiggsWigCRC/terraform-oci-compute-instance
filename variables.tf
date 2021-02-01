@@ -4,6 +4,15 @@ variable "compartment_ocid" {
   description = "Compartment's OCID where VCN will be created. "
 }
 
+variable "tenancy_ocid" {
+  description = "tenancy OCID used to receive availability domains"
+}
+
+
+#variable "ad_list" {
+#  type = list(string)
+#}
+
 variable "instance_display_name" {
   description = "Name of Instance. "
   default     = ""
@@ -31,7 +40,7 @@ variable "boot_volume_size_in_gbs" {
 
 variable "shape" {
   description = "The shape of an instance. "
-  default     = "VM.Standard2.1"
+  default     = "VM.Standard.E2.1.Micro"
 }
 
 variable "assign_public_ip" {
